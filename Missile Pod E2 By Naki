@@ -15,7 +15,7 @@ if(first()){
     
     Gravity=1
     
-    MaxAmmo=8
+    MaxAmmo=4
     
     Array=array()
     
