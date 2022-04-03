@@ -1,0 +1,81 @@
+@name Railgun E2 by Naki
+@inputs Fire
+@outputs Ready Ammo RecoilOut MaxAmmo Name:string
+@persist Recoil Entity:entity MuzzleVelocity Ready A Ammo MaxAmmo Name:string
+if(first()){
+    Name="200mm RailGun"
+    MaxAmmo=2
+    Entity=entity()
+    timer("ready",100)
+    timer("reload",100)
+    holoCreate(1)
+    holoPos(1,Entity:toWorld(vec(0,0,0)))
+    holoAng(1,Entity:toWorld(ang(0,0,0)))
+    holoModel(1,"models/sprops/misc/pyramids/rsize_1/rpyr_12x144.mdl")
+    holoScale(1,vec(0.4,0.4,9999))
+    holoDisableShading(1,1)
+    holoColor(1,vec(0,175,255)+vec(255)*0.1)
+    holoMaterial(1,"models/debug/debugwhite")
+    timer("refresh",100)
+    A=0
+}
+interval(100)
+if(Ammo>0){
+if(Fire&Ready){
+    timer("fire",100)
+    Ready=0
+}
+}
+if(clk("fire")){
+    Ready=0
+    Prop=propSpawn("models/props_phx/cannonball_solid.mdl",ang(0),1)
+    Prop:propDrag(0)
+    Prop:setAlpha(0)
+    rangerFilter(array(Prop,entity(),Entity))
+    Prop:setPos(rangerOffsetHull(99999,Entity:pos(),Entity:up(),vec(2)):pos())
+    Prop:propBreak()
+    holoPos(1,Entity:toWorld(vec(0,0,0)))
+    holoAng(1,Entity:toWorld(ang(0,0,0)))
+    A=100
+    Entity:soundPlay("sfx",4,"acf_extra/tankfx/energy/wpn_lasersniper_fire_3d.wav")
+    timer("ready",500+((3000/2)*MaxAmmo))
+    timer("refresh",100)
+    Ammo-=1
+    Recoil=100
+}
+if(Recoil>0){
+    Recoil-=5
+}
+if(Recoil<0){
+    Recoil=0
+}
+RecoilOut=Recoil
+
+if(changed(Ready)&Ready==0){
+    holoPos(1,Entity:toWorld(vec(0,0,0)))
+    holoAng(1,Entity:toWorld(ang(0,0,0)))
+    A=100
+}
+if(clk("refresh")){
+    if(A>0){
+        A-=1+(clamp(100-A,0,100)*0.15)
+        timer("refresh",100)
+    }
+    if(A<0){
+        A=0
+    }
+    holoScale(1,vec(0.4*(clamp(A,0,100)/100),0.4*(clamp(A,0,100)/100),9999))
+}
+if(changed(Ammo)&Ammo==0){
+    timer("reload",3000+((10000/2)*MaxAmmo))
+}
+if(clk("reload")){
+    Ammo=MaxAmmo
+}
+if(clk("ready")){
+    Ready=1
+}
+
+if(dupefinished()){
+    reset()
+}
