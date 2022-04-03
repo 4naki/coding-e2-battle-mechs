@@ -1,4 +1,4 @@
-@name Railgun
+@name Railgun E2 by Naki
 @inputs Fire
 @outputs Ready Ammo RecoilOut MaxAmmo Name:string
 @persist Recoil Entity:entity MuzzleVelocity Ready A Ammo MaxAmmo Name:string
