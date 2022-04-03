@@ -1,4 +1,4 @@
-@name Railgun E2 by Naki
+@name Railgun
 @inputs Fire
 @outputs Ready Ammo RecoilOut MaxAmmo Name:string
 @persist Recoil Entity:entity MuzzleVelocity Ready A Ammo MaxAmmo Name:string
@@ -41,7 +41,7 @@ if(clk("fire")){
     timer("ready",500+((3000/2)*MaxAmmo))
     timer("refresh",100)
     Ammo-=1
-    Recoil=100
+    Recoil=200
 }
 if(Recoil>0){
     Recoil-=5
