@@ -1,0 +1,97 @@
+@name Missile Pod E2 By Naki
+@inputs Fire
+@outputs Ammo RecoilOut Ready MaxAmmo Name:string
+@persist Recoil Entity:entity Array:array MuzzleVelocity HeightGain SpeedLimiter SpawnOffset Ready Ammo Gravity MaxAmmo Name:string
+if(first()){
+    Name="130mm BGM-71"
+    
+    Entity=entity()
+    
+    #initial launch velocity
+    MuzzleVelocity=1500
+    
+    #how high the missile spawns from the creation point
+    SpawnOffset=15
+    
+    Gravity=1
+    
+    MaxAmmo=8
+    
+    Array=array()
+    
+    #ifdef propSpawnASync(number)
+    #endif
+    timer("ready",100)
+    timer("reload",100)
+}
+interval(60)
+
+if(Ammo>0){
+if(Fire&Ready){
+
+        #ifdef propSpawnASync(number)
+        propSpawnASync(1)
+        #endif
+        soundStop("sfx")
+        Entity:soundPlay("sfx",0.6,"acf_extra/tankfx/gnomefather/mortar1.wav")
+        Prop=propSpawn("models/props_phx/ww2bomb.mdl",Entity:toWorld(ang(-90+(randint(-1,1)*0.1),(randint(-1,1)*0.1),(randint(-1,1)*0.1))),0)
+        Prop:propDrag(0)
+        Prop:propGravity(Gravity)
+        Prop:setPos(Entity:toWorld(vec(-5*((Ammo==4|Ammo==2)-(Ammo==3|Ammo==1)),-6*((Ammo>2)-(Ammo<3)),SpawnOffset)))
+        Prop:setTrails(15,0,0.4,"trails/smoke",vec(255),255)
+        Prop:setMass(10000)
+        Array:pushEntity(Prop)
+        Prop:propSetVelocity(Prop:forward()*MuzzleVelocity)
+        Ready=0
+        timer("ready",250+((400/8)*MaxAmmo))
+        Ammo-=1
+        Recoil=100
+    }
+}
+if(Recoil>0){
+    Recoil-=12
+}
+if(Recoil<0){
+    Recoil=0
+}
+RecoilOut=Recoil
+if(changed(Ammo)&Ammo==0){
+    timer("reload",5000+((5000/8)*MaxAmmo))
+}
+for(I=1,Array:count()){
+    E=Array[I,entity]  
+    E:propDraw(0)
+    E:propDrag(0)
+    E:applyForce((E:forward()*E:mass()*500)+vec(0,0,E:mass()*25))
+    rangerFilter(E)
+    rangerFilter(Entity)
+    if(E:pos():distance(Entity:pos())>500){
+    if(rangerOffsetHull(150, E:pos(), E:vel() * 1,vec(15)):hit())
+    {
+        E:propBreak()
+    }
+    }
+    #if(changed(I)){
+    holoCreate(I)
+    holoModel(I, "models/missiles/fim_92.mdl")
+    holoMaterial(I, "")
+    holoColor(I, vec(255,255,255))
+    holoPos(I, E:toWorld(vec(0,0,0)))
+    holoParent(I, E)
+    #holoScale(I, vec(1,1,1)*0.4)
+    #}
+    holoAng(I, (E:vel()):toAngle())
+    if(!(E:isValid())){
+        Array:remove(I)
+    }
+}
+if(clk("ready")){
+    Ready=1
+}
+if(clk("reload")){
+    Ammo=MaxAmmo
+}
+
+if(dupefinished()){
+    reset()
+}
