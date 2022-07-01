@@ -4,8 +4,7 @@
 @persist XAng ZAng MaxBoost ThirdPerson Aimlock CamAimPosF:vector Freelook ZMState AimMode YawCustom BaseFOV FOV:array CamFOV CamFilter:array Slam ChargeReady BoostLeft BoostPercentage Speed_Fix [Scale Offset FP_CamPos TP_CamPos RSave LSave]:vector Length_A Length_B Length_C Leg_Width Leg_Stand_Width Leg_Forward_Offset Run_Multiplier Run_Distance_Multiplier Height Step_Height Mass Step_Lerp Step Step_Distance Move_Speed Step_Speed Jump_Force On_Ground TP_CamDist TP [Cam_Hold]:angle Jump
 @persist Edit Debug WalkOverWrite RunOverWrite
 #@trigger none
-#with love, ClockEFFX
-#do not distribute
+#partially ClockEFFX's
 #runOnKeys(Seat:driver(),1)
 
 if(first()|dupefinished()){
